@@ -2,7 +2,7 @@ import SimpleExpressionEvaluator.{ Eq, Gt, Ne, _ }
 import org.scalatest.{ Matchers, WordSpec }
 
 class SimpleExpressionEvaluatorTest extends WordSpec with Matchers {
-  "The Expression evaluator" can {
+  "The Simple Expression evaluator" can {
     "do basic arithmetic operations on integers" should {
       "add" in {
         val expression = App(Add, IntVal(5), IntVal(3))
