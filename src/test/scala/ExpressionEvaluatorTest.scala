@@ -33,5 +33,19 @@ class ExpressionEvaluatorTest extends WordSpec with Matchers {
 
       answer should be (Some(BooleanAnswer(false)))
     }
+
+    "perform boolean comparisons" in {
+      val expression = App(Eq, BooleanAnswer(true), BooleanAnswer(true))
+
+      val answer: Option[Answer] = evaluate(expression)
+
+      answer should be (Some(BooleanAnswer(true)))
+    }
+
+    "not mix answertypes" in {
+      val expression = App(Eq, BooleanAnswer(true), IntAnswer(5))
+
+      assertThrows[IllegalArgumentException](evaluate(expression))
+    }
   }
 }

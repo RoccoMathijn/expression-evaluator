@@ -63,14 +63,14 @@ object ExpressionEvaluator {
         case (Gt, IntAnswer(r)) => BooleanAnswer(this.value > r)
         case (Ne, IntAnswer(r)) => BooleanAnswer(this.value != r)
         case (Eq, IntAnswer(r)) => BooleanAnswer(this.value == r)
-        case (_, _) => throw new IllegalArgumentException(s"Incompatible type. Expected Int got $right")
+        case (_, _) => throw new IllegalArgumentException(s"Incompatible type. Expected IntAnswer got $right")
       }
     }
   }
 
   case class BooleanAnswer(value: Boolean) extends Answer with Comparisons[Answer] {
     def apply(operator: Operator, answer: Answer): Answer = operator match {
-      case _: ComparisonOperator => this.apply(operator, answer)
+      case comparisonOperator: ComparisonOperator => this.apply(comparisonOperator, answer)
       case _ => throw new IllegalArgumentException(s"Incompatible operator: $operator")
     }
 
@@ -82,7 +82,7 @@ object ExpressionEvaluator {
       case (Gt, BooleanAnswer(r)) => BooleanAnswer(this.value > r)
       case (Ne, BooleanAnswer(r)) => BooleanAnswer(this.value != r)
       case (Eq, BooleanAnswer(r)) => BooleanAnswer(this.value == r)
-      case (_, _) => throw new IllegalArgumentException(s"Incompatible type. Expected Int got $right")
+      case (_, _) => throw new IllegalArgumentException(s"Incompatible type. Expected BooleanAnswer got $right")
     }
   }
   case class App(operator: Operator, left: Expr, right: Expr) extends Expr
