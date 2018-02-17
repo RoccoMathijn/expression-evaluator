@@ -93,11 +93,28 @@ object ExpressionEvaluator {
       }
   }
 
+  case class StringAnswer(value: String) extends Answer with Comparisons[Answer] {
+    def apply(operator: Operator, answer: Answer): Answer = operator match {
+      case comparisonOperator: ComparisonOperator => this.apply(comparisonOperator, answer)
+      case _ => throw new IllegalArgumentException(s"Incompatible operator: $operator")
+    }
+
+    def apply(operator: ComparisonOperator, right: Answer): BooleanAnswer =
+      (operator, right) match {
+        case (Lt, StringAnswer(r)) => BooleanAnswer(this.value < r)
+        case (LTe, StringAnswer(r)) => BooleanAnswer(this.value <= r)
+        case (GTe, StringAnswer(r)) => BooleanAnswer(this.value >= r)
+        case (Gt, StringAnswer(r)) => BooleanAnswer(this.value > r)
+        case (Ne, StringAnswer(r)) => BooleanAnswer(this.value != r)
+        case (Eq, StringAnswer(r)) => BooleanAnswer(this.value == r)
+        case (_, _) => throw new IllegalArgumentException(s"Incompatible type. Expected StringAnswer got $right")
+      }
+  }
+
   case class App(operator: Operator, left: Expr, right: Expr) extends Expr
 
   def evaluate(expr: Expr): Option[Answer] = expr match {
-    case a: IntAnswer => Some(a)
-    case a: BooleanAnswer => Some(a)
+    case answer: Answer => Some(answer)
     case app@App(operator: Operator, left, right) if valid(app) => for {
         x <- evaluate(left)
         y <- evaluate(right)
