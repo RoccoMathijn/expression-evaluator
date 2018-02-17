@@ -1,4 +1,5 @@
 import ExpressionEvaluator._
+import ExpressionEvaluator.Expr.evaluate
 import org.scalatest.{ Matchers, WordSpec }
 
 class ExpressionEvaluatorTest extends WordSpec with Matchers {
@@ -361,11 +362,6 @@ class ExpressionEvaluatorTest extends WordSpec with Matchers {
       }
       "throw an error when evaluating mixed answertypes" in {
         val expression = App(Eq, BooleanAnswer(true), IntAnswer(5))
-
-        assertThrows[IllegalArgumentException](evaluate(expression))
-      }
-      "throw an error for unsupported operations" in {
-        val expression = App(Bla, IntAnswer(1), IntAnswer(2))
 
         assertThrows[IllegalArgumentException](evaluate(expression))
       }
