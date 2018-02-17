@@ -33,6 +33,21 @@ object ExpressionEvaluator {
   case object And extends LogicalOperator
 
   abstract class Expr
+  object Expr {
+    def evaluate(expr: Expr): Option[Answer] = expr match {
+      case answer: Answer => Some(answer)
+      case app@App(operator: Operator, left, right) if valid(app) => for {
+        x <- evaluate(left)
+        y <- evaluate(right)
+      } yield x.apply(operator, y)
+      case _ => None
+    }
+
+    def valid(app: App): Boolean = app match {
+      case App(Div, _, IntAnswer(value)) if value == 0 => false
+      case _ => true
+    }
+  }
   abstract class Answer extends Expr {
     def apply(operator: Operator, answer: Answer): Answer
   }
@@ -112,18 +127,4 @@ object ExpressionEvaluator {
   }
 
   case class App(operator: Operator, left: Expr, right: Expr) extends Expr
-
-  def evaluate(expr: Expr): Option[Answer] = expr match {
-    case answer: Answer => Some(answer)
-    case app@App(operator: Operator, left, right) if valid(app) => for {
-        x <- evaluate(left)
-        y <- evaluate(right)
-      } yield x.apply(operator, y)
-    case _ => None
-  }
-
-  def valid(app: App): Boolean = app match {
-    case App(Div, _, IntAnswer(value)) if value == 0 => false
-    case _ => true
-  }
 }
