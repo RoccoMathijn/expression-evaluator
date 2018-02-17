@@ -47,5 +47,36 @@ class ExpressionEvaluatorTest extends WordSpec with Matchers {
 
       assertThrows[IllegalArgumentException](evaluate(expression))
     }
+
+    "perform logical operations on booleans" should {
+      "Or positive" in {
+        val expression = App(Or, BooleanAnswer(true), BooleanAnswer(false))
+
+        val answer: Option[Answer] = evaluate(expression)
+
+        answer should be(Some(BooleanAnswer(true)))
+      }
+      "Or negative" in {
+        val expression = App(Or, BooleanAnswer(false), BooleanAnswer(false))
+
+        val answer: Option[Answer] = evaluate(expression)
+
+        answer should be(Some(BooleanAnswer(false)))
+      }
+      "And positive" in {
+        val expression = App(And, BooleanAnswer(true), BooleanAnswer(true))
+
+        val answer: Option[Answer] = evaluate(expression)
+
+        answer should be(Some(BooleanAnswer(true)))
+      }
+      "And negative" in {
+        val expression = App(And, BooleanAnswer(true), BooleanAnswer(false))
+
+        val answer: Option[Answer] = evaluate(expression)
+
+        answer should be(Some(BooleanAnswer(false)))
+      }
+    }
   }
 }

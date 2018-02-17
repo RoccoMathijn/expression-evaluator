@@ -31,7 +31,6 @@ object ExpressionEvaluator {
   abstract class LogicalOperator extends Operator
   case object Or extends LogicalOperator
   case object And extends LogicalOperator
-  case object Not extends LogicalOperator
 
   abstract class Expr
   abstract class Answer extends Expr {
@@ -68,36 +67,41 @@ object ExpressionEvaluator {
     }
   }
 
-  case class BooleanAnswer(value: Boolean) extends Answer with Comparisons[Answer] {
+  case class BooleanAnswer(value: Boolean) extends Answer with Comparisons[Answer] with Logicals[Answer] {
     def apply(operator: Operator, answer: Answer): Answer = operator match {
       case comparisonOperator: ComparisonOperator => this.apply(comparisonOperator, answer)
+      case logicalOperator: LogicalOperator => this.apply(logicalOperator, answer)
       case _ => throw new IllegalArgumentException(s"Incompatible operator: $operator")
     }
 
     def apply(operator: ComparisonOperator, right: Answer): BooleanAnswer =
       (operator, right) match {
-      case (Lt, BooleanAnswer(r)) => BooleanAnswer(this.value < r)
-      case (LTe, BooleanAnswer(r)) => BooleanAnswer(this.value <= r)
-      case (GTe, BooleanAnswer(r)) => BooleanAnswer(this.value >= r)
-      case (Gt, BooleanAnswer(r)) => BooleanAnswer(this.value > r)
-      case (Ne, BooleanAnswer(r)) => BooleanAnswer(this.value != r)
-      case (Eq, BooleanAnswer(r)) => BooleanAnswer(this.value == r)
-      case (_, _) => throw new IllegalArgumentException(s"Incompatible type. Expected BooleanAnswer got $right")
-    }
+        case (Lt, BooleanAnswer(r)) => BooleanAnswer(this.value < r)
+        case (LTe, BooleanAnswer(r)) => BooleanAnswer(this.value <= r)
+        case (GTe, BooleanAnswer(r)) => BooleanAnswer(this.value >= r)
+        case (Gt, BooleanAnswer(r)) => BooleanAnswer(this.value > r)
+        case (Ne, BooleanAnswer(r)) => BooleanAnswer(this.value != r)
+        case (Eq, BooleanAnswer(r)) => BooleanAnswer(this.value == r)
+        case (_, _) => throw new IllegalArgumentException(s"Incompatible type. Expected BooleanAnswer got $right")
+      }
+
+    def apply(operator: LogicalOperator, right: Answer): BooleanAnswer =
+      (operator, right) match {
+        case (Or, BooleanAnswer(r)) => BooleanAnswer(this.value || r)
+        case (And, BooleanAnswer(r)) => BooleanAnswer(this.value && r)
+        case (_, _) => throw new IllegalArgumentException(s"Incompatible type. Expected BooleanAnswer got $right")
+      }
   }
+
   case class App(operator: Operator, left: Expr, right: Expr) extends Expr
 
   def evaluate(expr: Expr): Option[Answer] = expr match {
     case a: IntAnswer => Some(a)
     case a: BooleanAnswer => Some(a)
-    case app@App(operator: BasicArithmeticOperator, left, right) if valid(app) => for {
+    case app@App(operator: Operator, left, right) if valid(app) => for {
         x <- evaluate(left)
         y <- evaluate(right)
       } yield x.apply(operator, y)
-    case app@App(operator: ComparisonOperator, left, right) if valid(app) => for {
-      x <- evaluate(left)
-      y <- evaluate(right)
-    } yield x.apply(operator, y)
     case _ => None
   }
 
