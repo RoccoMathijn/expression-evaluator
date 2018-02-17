@@ -39,11 +39,6 @@ class ExpressionEvaluatorTest extends WordSpec with Matchers {
 
         answer should be(None)
       }
-      "throw an error for arithmetic operations on unsupported types" in {
-        val expression = App(Bla, BooleanAnswer(true), BooleanAnswer(true))
-
-        assertThrows[IllegalArgumentException](evaluate(expression))
-      }
     }
     
     "do comparison operations" should {
@@ -331,6 +326,16 @@ class ExpressionEvaluatorTest extends WordSpec with Matchers {
       }
     }
     "do proper error handling" should {
+      "throw an error for arithmetic operations on unsupported types" in {
+        val expression = App(Div, BooleanAnswer(true), BooleanAnswer(true))
+
+        assertThrows[IllegalArgumentException](evaluate(expression))
+      }
+      "throw an error for logical operations on unsupported types" in {
+        val expression = App(And, StringAnswer("Foo"), StringAnswer("Bar"))
+
+        assertThrows[IllegalArgumentException](evaluate(expression))
+      }
       "throw an error when evaluating mixed answertypes" in {
         val expression = App(Eq, BooleanAnswer(true), IntAnswer(5))
 
