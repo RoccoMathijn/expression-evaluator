@@ -295,7 +295,7 @@ class ExpressionEvaluatorTest extends WordSpec with Matchers {
         answer should be(Some(BooleanAnswer(false)))
       }
     }
-    "perform logical operations" should {
+    "do logical operations" should {
       "Or positive" in {
         val expression = App(Or, BooleanAnswer(true), BooleanAnswer(false))
 
@@ -325,7 +325,30 @@ class ExpressionEvaluatorTest extends WordSpec with Matchers {
         answer should be(Some(BooleanAnswer(false)))
       }
     }
-    "do proper error handling" should {
+    "do nested operations" should {
+      "nested arithmetic operation" in {
+        val expression = App(Mul, IntAnswer(5), App(Mul, IntAnswer(5), IntAnswer(5)))
+
+        val answer: Option[Answer] = evaluate(expression)
+
+        answer should be(Some(IntAnswer(125)))
+      }
+      "nested logical operation" in {
+        val expression = App(And, BooleanAnswer(true), App(And, BooleanAnswer(true), BooleanAnswer(true)))
+
+        val answer: Option[Answer] = evaluate(expression)
+
+        answer should be(Some(BooleanAnswer(true)))
+      }
+      "nested mixed operation" in {
+        val expression = App(And, BooleanAnswer(true), App(Eq, StringAnswer("Foo"), StringAnswer("Foo")))
+
+        val answer: Option[Answer] = evaluate(expression)
+
+        answer should be(Some(BooleanAnswer(true)))
+      }
+    }
+    "do error handling" should {
       "throw an error for arithmetic operations on unsupported types" in {
         val expression = App(Div, BooleanAnswer(true), BooleanAnswer(true))
 
