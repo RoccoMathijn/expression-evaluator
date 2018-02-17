@@ -47,6 +47,7 @@ object ExpressionEvaluator {
       case _ => true
     }
   }
+
   abstract class Answer extends Expr {
     def apply(operator: Operator, answer: Answer): Answer
   }
@@ -55,7 +56,7 @@ object ExpressionEvaluator {
     def apply(operator: Operator, answer: Answer): Answer = operator match {
       case basicArithmeticOperator: BasicArithmeticOperator => this.apply(basicArithmeticOperator, answer)
       case comparisonOperator: ComparisonOperator => this.apply(comparisonOperator, answer)
-      case _ => throw new IllegalArgumentException(s"Incompatible operator: $operator")
+      case _ => throw new UnsupportedOperationException(s"Unsupported operation: $operator")
     }
 
     def apply(operator: BasicArithmeticOperator, right: Answer): IntAnswer = {
@@ -85,8 +86,7 @@ object ExpressionEvaluator {
     def apply(operator: Operator, answer: Answer): Answer = operator match {
       case comparisonOperator: ComparisonOperator => this.apply(comparisonOperator, answer)
       case logicalOperator: LogicalOperator => this.apply(logicalOperator, answer)
-      case _ => throw new IllegalArgumentException(s"Incompatible operator: $operator")
-    }
+      case _ => throw new UnsupportedOperationException(s"Unsupported operation: $operator")    }
 
     def apply(operator: ComparisonOperator, right: Answer): BooleanAnswer =
       (operator, right) match {
@@ -110,7 +110,7 @@ object ExpressionEvaluator {
   final case class StringAnswer(value: String) extends Answer with Comparisons[Answer] {
     def apply(operator: Operator, answer: Answer): Answer = operator match {
       case comparisonOperator: ComparisonOperator => this.apply(comparisonOperator, answer)
-      case _ => throw new IllegalArgumentException(s"Incompatible operator: $operator")
+      case _ => throw new UnsupportedOperationException(s"Unsupported operation: $operator")
     }
 
     def apply(operator: ComparisonOperator, right: Answer): BooleanAnswer =
