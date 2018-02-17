@@ -51,7 +51,7 @@ object ExpressionEvaluator {
     def apply(operator: Operator, answer: Answer): Answer
   }
 
-  case class IntAnswer(value: Int) extends Answer with Arithmetics[Answer] with Comparisons[Answer] {
+  final case class IntAnswer(value: Int) extends Answer with Arithmetics[Answer] with Comparisons[Answer] {
     def apply(operator: Operator, answer: Answer): Answer = operator match {
       case basicArithmeticOperator: BasicArithmeticOperator => this.apply(basicArithmeticOperator, answer)
       case comparisonOperator: ComparisonOperator => this.apply(comparisonOperator, answer)
@@ -81,7 +81,7 @@ object ExpressionEvaluator {
     }
   }
 
-  case class BooleanAnswer(value: Boolean) extends Answer with Comparisons[Answer] with Logicals[Answer] {
+  final case class BooleanAnswer(value: Boolean) extends Answer with Comparisons[Answer] with Logicals[Answer] {
     def apply(operator: Operator, answer: Answer): Answer = operator match {
       case comparisonOperator: ComparisonOperator => this.apply(comparisonOperator, answer)
       case logicalOperator: LogicalOperator => this.apply(logicalOperator, answer)
@@ -107,7 +107,7 @@ object ExpressionEvaluator {
       }
   }
 
-  case class StringAnswer(value: String) extends Answer with Comparisons[Answer] {
+  final case class StringAnswer(value: String) extends Answer with Comparisons[Answer] {
     def apply(operator: Operator, answer: Answer): Answer = operator match {
       case comparisonOperator: ComparisonOperator => this.apply(comparisonOperator, answer)
       case _ => throw new IllegalArgumentException(s"Incompatible operator: $operator")
@@ -125,5 +125,5 @@ object ExpressionEvaluator {
       }
   }
 
-  case class App(operator: Operator, left: Expr, right: Expr) extends Expr
+  final case class App(operator: Operator, left: Expr, right: Expr) extends Expr
 }
