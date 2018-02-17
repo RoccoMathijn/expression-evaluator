@@ -18,7 +18,6 @@ object ExpressionEvaluator {
   case object Sub extends BasicArithmeticOperator
   case object Mul extends BasicArithmeticOperator
   case object Div extends BasicArithmeticOperator
-  case object Bla extends BasicArithmeticOperator
 
   abstract class ComparisonOperator extends Operator
   case object Lt extends ComparisonOperator
