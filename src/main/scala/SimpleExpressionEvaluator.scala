@@ -1,4 +1,4 @@
-object ExpressionEvaluator {
+object SimpleExpressionEvaluator {
 
   def evaluate(expr: Expr): Answer = expr match {
     case IntVal(n) => IntAnswer(Some(n))
@@ -48,51 +48,34 @@ object ExpressionEvaluator {
     case _ => true
   }
 
-  trait Operator
-
-  trait ArithmeticOperator extends Operator
-
-  trait ComparisonOperator extends Operator
-
-  trait BooleanOperator extends Operator
-
-  trait Expr
-
-  trait Answer
-
+  abstract class Expr
   case class IntVal(n: Int) extends Expr
-
   case class BoolVal(n: Boolean) extends Expr
-
   case class App(operator: Operator, left: Expr, right: Expr) extends Expr
 
-  case class IntAnswer(value: Option[Int]) extends Answer
+  abstract class Operator
+  abstract class ArithmeticOperator extends Operator
+  abstract class ComparisonOperator extends Operator
+  abstract class BooleanOperator extends Operator
 
+
+  abstract class Answer
+  case class IntAnswer(value: Option[Int]) extends Answer
   case class BooleanAnswer(value: Option[Boolean]) extends Answer
 
   case object Add extends ArithmeticOperator
-
   case object Sub extends ArithmeticOperator
-
   case object Mul extends ArithmeticOperator
-
   case object Div extends ArithmeticOperator
 
   case object Lt extends ComparisonOperator
-
   case object LTe extends ComparisonOperator
-
   case object GTe extends ComparisonOperator
-
   case object Gt extends ComparisonOperator
-
   case object Ne extends ComparisonOperator
-
   case object Eq extends ComparisonOperator
 
   case object Or extends BooleanOperator
-
   case object And extends BooleanOperator
-
   case object Not extends BooleanOperator
 }
